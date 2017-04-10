@@ -564,7 +564,7 @@ exports.PDFRenderingQueue = PDFRenderingQueue;
   "useOnlyCssZoom": false,
   "externalLinkTarget": 0,
   "enhanceTextSelection": false,
-  "renderInteractiveForms": false
+  "renderInteractiveForms": true
 }
 
   );
@@ -5294,7 +5294,7 @@ var PDFPageView = (function PDFPageViewClosure() {
     var textLayerFactory = options.textLayerFactory;
     var annotationLayerFactory = options.annotationLayerFactory;
     var enhanceTextSelection = options.enhanceTextSelection || false;
-    var renderInteractiveForms = options.renderInteractiveForms || false;
+    var renderInteractiveForms = options.renderInteractiveForms || true;
 
     this.id = id;
     this.renderingId = 'page' + id;
@@ -6635,7 +6635,7 @@ var PDFViewer = (function pdfViewer() {
     this.downloadManager = options.downloadManager || null;
     this.removePageBorders = options.removePageBorders || false;
     this.enhanceTextSelection = options.enhanceTextSelection || false;
-    this.renderInteractiveForms = options.renderInteractiveForms || false;
+    this.renderInteractiveForms = options.renderInteractiveForms || true;
 
     this.defaultRenderingQueue = !options.renderingQueue;
     if (this.defaultRenderingQueue) {
@@ -7563,7 +7563,7 @@ var PDFViewerApplication = {
       linkService: pdfLinkService,
       downloadManager: downloadManager,
       enhanceTextSelection: false,
-      renderInteractiveForms: false,
+      renderInteractiveForms: true,
     });
     pdfRenderingQueue.setViewer(this.pdfViewer);
     pdfLinkService.setViewer(this.pdfViewer);
