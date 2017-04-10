@@ -18,14 +18,13 @@
 
 var DEFAULT_URL = 'newsatbook_008_test1.pdf';
 
-
-  var pdfjsWebLibs = {
+var pdfjsWebLibs = {
     pdfjsWebPDFJS: window.pdfjsDistBuildPdf
-  };
+};
   
-  (function () {
+(function () {
 
-
+/////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
     factory((root.pdfjsWebGrabToPan = {}));
@@ -234,147 +233,7 @@ var DEFAULT_URL = 'newsatbook_008_test1.pdf';
   exports.GrabToPan = GrabToPan;
 }));
 
-
-(function (root, factory) {
-  {
-    factory((root.pdfjsWebMozPrintCallbackPolyfill = {}));
-  }
-}(this, function (exports) {
-  if ('mozPrintCallback' in document.createElement('canvas')) {
-    return;
-  }
-
-  // Cause positive result on feature-detection:
-  HTMLCanvasElement.prototype.mozPrintCallback = undefined;
-
-  var canvases;   // During print task: non-live NodeList of <canvas> elements
-  var index;      // Index of <canvas> element that is being processed
-
-  var print = window.print;
-  window.print = function print() {
-    if (canvases) {
-      console.warn('Ignored window.print() because of a pending print job.');
-      return;
-    }
-    try {
-      dispatchEvent('beforeprint');
-    } finally {
-      canvases = document.querySelectorAll('canvas');
-      index = -1;
-      next();
-    }
-  };
-
-  function dispatchEvent(eventType) {
-    var event = document.createEvent('CustomEvent');
-    event.initCustomEvent(eventType, false, false, 'custom');
-    window.dispatchEvent(event);
-  }
-
-  function next() {
-    if (!canvases) {
-      return; // Print task cancelled by user (state reset in abort())
-    }
-
-    renderProgress();
-    if (++index < canvases.length) {
-      var canvas = canvases[index];
-      if (typeof canvas.mozPrintCallback === 'function') {
-        canvas.mozPrintCallback({
-          context: canvas.getContext('2d'),
-          abort: abort,
-          done: next
-        });
-      } else {
-        next();
-      }
-    } else {
-      renderProgress();
-      // Push window.print in the macrotask queue to avoid being affected by
-      // the deprecation of running print() code in a microtask, see
-      // https://github.com/mozilla/pdf.js/issues/7547.
-      setTimeout(function() {
-        if (!canvases) {
-          return; // Print task cancelled by user.
-        }
-        print.call(window);
-        setTimeout(abort, 20); // Tidy-up
-      }, 0);
-    }
-  }
-
-  function abort() {
-    if (canvases) {
-      canvases = null;
-      renderProgress();
-      dispatchEvent('afterprint');
-    }
-  }
-
-  function renderProgress() {
-    var progressContainer = document.getElementById('mozPrintCallback-shim');
-    if (canvases && canvases.length) {
-      var progress = Math.round(100 * index / canvases.length);
-      var progressBar = progressContainer.querySelector('progress');
-      var progressPerc = progressContainer.querySelector('.relative-progress');
-      progressBar.value = progress;
-      progressPerc.textContent = progress + '%';
-      progressContainer.removeAttribute('hidden');
-      progressContainer.onclick = abort;
-    } else {
-      progressContainer.setAttribute('hidden', '');
-    }
-  }
-
-  var hasAttachEvent = !!document.attachEvent;
-
-  window.addEventListener('keydown', function(event) {
-    // Intercept Cmd/Ctrl + P in all browsers.
-    // Also intercept Cmd/Ctrl + Shift + P in Chrome and Opera
-    if (event.keyCode === 80/*P*/ && (event.ctrlKey || event.metaKey) &&
-        !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
-      window.print();
-      if (hasAttachEvent) {
-        // Only attachEvent can cancel Ctrl + P dialog in IE <=10
-        // attachEvent is gone in IE11, so the dialog will re-appear in IE11.
-        return;
-      }
-      event.preventDefault();
-      if (event.stopImmediatePropagation) {
-        event.stopImmediatePropagation();
-      } else {
-        event.stopPropagation();
-      }
-      return;
-    }
-    if (event.keyCode === 27 && canvases) { // Esc
-      abort();
-    }
-  }, true);
-  if (hasAttachEvent) {
-    document.attachEvent('onkeydown', function(event) {
-      event = event || window.event;
-      if (event.keyCode === 80/*P*/ && event.ctrlKey) {
-        event.keyCode = 0;
-        return false;
-      }
-    });
-  }
-
-  if ('onbeforeprint' in window) {
-    // Do not propagate before/afterprint events when they are not triggered
-    // from within this polyfill. (FF/IE).
-    var stopPropagationIfNeeded = function(event) {
-      if (event.detail !== 'custom' && event.stopImmediatePropagation) {
-        event.stopImmediatePropagation();
-      }
-    };
-    window.addEventListener('beforeprint', stopPropagationIfNeeded, false);
-    window.addEventListener('afterprint', stopPropagationIfNeeded, false);
-  }
-}));
-
-
+///////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
     factory((root.pdfjsWebOverlayManager = {}));
@@ -510,7 +369,7 @@ var OverlayManager = {
 exports.OverlayManager = OverlayManager;
 }));
 
-
+//////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
     factory((root.pdfjsWebPDFRenderingQueue = {}));
@@ -682,7 +541,7 @@ exports.RenderingStates = RenderingStates;
 exports.PDFRenderingQueue = PDFRenderingQueue;
 }));
 
-
+/////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
     factory((root.pdfjsWebPreferences = {}));
@@ -691,7 +550,7 @@ exports.PDFRenderingQueue = PDFRenderingQueue;
 
   var defaultPreferences = Promise.resolve(
 {
-  "showPreviousViewOnLoad": true,
+  "showPreviousViewOnLoad": false,
   "defaultZoomValue": "",
   "sidebarViewOnLoad": 0,
   "enableHandToolOnLoad": false,
@@ -881,7 +740,7 @@ Preferences._readFromStorage = function (prefObj) {
 exports.Preferences = Preferences;
 }));
 
-
+////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
     factory((root.pdfjsWebViewHistory = {}));
@@ -981,12 +840,14 @@ var ViewHistory = (function ViewHistoryClosure() {
 exports.ViewHistory = ViewHistory;
 }));
 
-
+///////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebDownloadManager = {}), root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebDownloadManager = {})
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, pdfjsLib) {
+	
   function download(blobUrl, filename) {
     var a = document.createElement('a');
     if (a.click) {
@@ -1069,11 +930,12 @@ exports.ViewHistory = ViewHistory;
   exports.DownloadManager = DownloadManager;
 }));
 
-
+//////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebHandTool = {}), root.pdfjsWebGrabToPan,
-      root.pdfjsWebPreferences);
+    factory((root.pdfjsWebHandTool = {})
+    	   , root.pdfjsWebGrabToPan
+           , root.pdfjsWebPreferences);
   }
 }(this, function (exports, grabToPan, preferences) {
 
@@ -1162,10 +1024,11 @@ var HandTool = (function HandToolClosure() {
 exports.HandTool = HandTool;
 }));
 
-
+/////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFAttachmentViewer = {}), root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebPDFAttachmentViewer = {})
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, pdfjsLib) {
 
@@ -1272,10 +1135,11 @@ var PDFAttachmentViewer = (function PDFAttachmentViewerClosure() {
 exports.PDFAttachmentViewer = PDFAttachmentViewer;
 }));
 
-
+////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFOutlineViewer = {}), root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebPDFOutlineViewer = {})
+           , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, pdfjsLib) {
 
@@ -1478,10 +1342,11 @@ var PDFOutlineViewer = (function PDFOutlineViewerClosure() {
 exports.PDFOutlineViewer = PDFOutlineViewer;
 }));
 
-
+//////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFSidebar = {}), root.pdfjsWebPDFRenderingQueue);
+    factory((root.pdfjsWebPDFSidebar = {})
+    	   , root.pdfjsWebPDFRenderingQueue);
   }
 }(this, function (exports, pdfRenderingQueue) {
 
@@ -1499,25 +1364,16 @@ var SidebarView = {
  * @property {PDFViewer} pdfViewer - The document viewer.
  * @property {PDFThumbnailViewer} pdfThumbnailViewer - The thumbnail viewer.
  * @property {PDFOutlineViewer} pdfOutlineViewer - The outline viewer.
- * @property {HTMLDivElement} mainContainer - The main container
- *   (in which the viewer element is placed).
- * @property {HTMLDivElement} outerContainer - The outer container
- *   (encasing both the viewer and sidebar elements).
+ * @property {HTMLDivElement} mainContainer - The main container (in which the viewer element is placed).
+ * @property {HTMLDivElement} outerContainer - The outer container (encasing both the viewer and sidebar elements).
  * @property {EventBus} eventBus - The application event bus.
- * @property {HTMLButtonElement} toggleButton - The button used for
- *   opening/closing the sidebar.
- * @property {HTMLButtonElement} thumbnailButton - The button used to show
- *   the thumbnail view.
- * @property {HTMLButtonElement} outlineButton - The button used to show
- *   the outline view.
- * @property {HTMLButtonElement} attachmentsButton - The button used to show
- *   the attachments view.
- * @property {HTMLDivElement} thumbnailView - The container in which
- *   the thumbnails are placed.
- * @property {HTMLDivElement} outlineView - The container in which
- *   the outline is placed.
- * @property {HTMLDivElement} attachmentsView - The container in which
- *   the attachments are placed.
+ * @property {HTMLButtonElement} toggleButton - The button used for opening/closing the sidebar.
+ * @property {HTMLButtonElement} thumbnailButton - The button used to show the thumbnail view.
+ * @property {HTMLButtonElement} outlineButton - The button used to show the outline view.
+ * @property {HTMLButtonElement} attachmentsButton - The button used to show the attachments view.
+ * @property {HTMLDivElement} thumbnailView - The container in which the thumbnails are placed.
+ * @property {HTMLDivElement} outlineView - The container in which the outline is placed.
+ * @property {HTMLDivElement} attachmentsView - The container in which the attachments are placed.
  */
 
 /**
@@ -1833,10 +1689,11 @@ exports.SidebarView = SidebarView;
 exports.PDFSidebar = PDFSidebar;
 }));
 
-
+///////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebUIUtils = {}), root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebUIUtils = {})
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, pdfjsLib) {
 
@@ -1926,9 +1783,9 @@ function getOutputScale(ctx) {
  * Scrolls specified element into view of its parent.
  * @param {Object} element - The element to be visible.
  * @param {Object} spot - An object with optional top and left properties,
- *   specifying the offset from the top left edge.
+ *                        specifying the offset from the top left edge.
  * @param {boolean} skipOverflowHiddenElements - Ignore elements that have
- *   the CSS rule `overflow: hidden;` set. The default is false.
+ *                  the CSS rule `overflow: hidden;` set. The default is false.
  */
 function scrollIntoView(element, spot, skipOverflowHiddenElements) {
   // Assuming offsetParent is available (it's not available when viewer is in
@@ -2367,10 +2224,11 @@ exports.binarySearchFirstItem = binarySearchFirstItem;
 exports.normalizeWheelEventDelta = normalizeWheelEventDelta;
 }));
 
-
+////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebDOMEvents = {}), root.pdfjsWebUIUtils);
+    factory((root.pdfjsWebDOMEvents = {})
+    	   , root.pdfjsWebUIUtils);
   }
 }(this, function (exports, uiUtils) {
   var EventBus = uiUtils.EventBus;
@@ -2502,11 +2360,13 @@ exports.normalizeWheelEventDelta = normalizeWheelEventDelta;
   exports.getGlobalEventBus = getGlobalEventBus;
 }));
 
-
+///////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPasswordPrompt = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebOverlayManager, root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebPasswordPrompt = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebOverlayManager
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, uiUtils, overlayManager, pdfjsLib) {
 
@@ -2517,13 +2377,10 @@ var OverlayManager = overlayManager.OverlayManager;
  * @typedef {Object} PasswordPromptOptions
  * @property {string} overlayName - Name of the overlay for the overlay manager.
  * @property {HTMLDivElement} container - Div container for the overlay.
- * @property {HTMLParagraphElement} label - Label containing instructions for
- *                                          entering the password.
+ * @property {HTMLParagraphElement} label - Label containing instructions for entering the password.
  * @property {HTMLInputElement} input - Input field for entering the password.
- * @property {HTMLButtonElement} submitButton - Button for submitting the
- *                                              password.
- * @property {HTMLButtonElement} cancelButton - Button for cancelling password
- *                                              entry.
+ * @property {HTMLButtonElement} submitButton - Button for submitting the password.
+ * @property {HTMLButtonElement} cancelButton - Button for cancelling password entry.
  */
 
 /**
@@ -2604,11 +2461,12 @@ var PasswordPrompt = (function PasswordPromptClosure() {
 exports.PasswordPrompt = PasswordPrompt;
 }));
 
-
+//////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFDocumentProperties = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebOverlayManager);
+    factory((root.pdfjsWebPDFDocumentProperties = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebOverlayManager);
   }
 }(this, function (exports, uiUtils, overlayManager) {
 
@@ -2828,10 +2686,11 @@ var PDFDocumentProperties = (function PDFDocumentPropertiesClosure() {
 exports.PDFDocumentProperties = PDFDocumentProperties;
 }));
 
-
+///////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFFindController = {}), root.pdfjsWebUIUtils);
+    factory((root.pdfjsWebPDFFindController = {})
+    	   , root.pdfjsWebUIUtils);
   }
 }(this, function (exports, uiUtils) {
 
@@ -3319,10 +3178,11 @@ exports.FindStates = FindStates;
 exports.PDFFindController = PDFFindController;
 }));
 
-
+///////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFPresentationMode = {}), root.pdfjsWebUIUtils);
+    factory((root.pdfjsWebPDFPresentationMode = {})
+    	   , root.pdfjsWebUIUtils);
   }
 }(this, function (exports, uiUtils) {
 var normalizeWheelEventDelta = uiUtils.normalizeWheelEventDelta;
@@ -3338,8 +3198,7 @@ var CONTROLS_SELECTOR = 'pdfPresentationModeControls';
  * @property {HTMLDivElement} viewer - (optional) The viewer element.
  * @property {PDFViewer} pdfViewer - The document viewer.
  * @property {EventBus} eventBus - The application event bus.
- * @property {Array} contextMenuItems - (optional) The menuitems that are added
- *   to the context menu in Presentation Mode.
+ * @property {Array} contextMenuItems - (optional) The menuitems that are added to the context menu in Presentation Mode.
  */
 
 /**
@@ -3813,11 +3672,12 @@ var PDFPresentationMode = (function PDFPresentationModeClosure() {
 exports.PDFPresentationMode = PDFPresentationMode;
 }));
 
-
+//////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFThumbnailView = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebPDFRenderingQueue);
+    factory((root.pdfjsWebPDFThumbnailView = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebPDFRenderingQueue);
   }
 }(this, function (exports, uiUtils, pdfRenderingQueue) {
 
@@ -3845,6 +3705,7 @@ var THUMBNAIL_CANVAS_BORDER_WIDTH = 1; // px
  * @implements {IRenderableView}
  */
 var PDFThumbnailView = (function PDFThumbnailViewClosure() {
+	
   function getTempCanvas(width, height) {
     var tempCanvas = PDFThumbnailView.tempImageCache;
     if (!tempCanvas) {
@@ -4186,10 +4047,11 @@ PDFThumbnailView.tempImageCache = null;
 exports.PDFThumbnailView = PDFThumbnailView;
 }));
 
-
+/////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebSecondaryToolbar = {}), root.pdfjsWebUIUtils);
+    factory((root.pdfjsWebSecondaryToolbar = {})
+    	   , root.pdfjsWebUIUtils);
   }
 }(this, function (exports, uiUtils) {
 
@@ -4199,31 +4061,21 @@ var mozL10n = uiUtils.mozL10n;
 /**
  * @typedef {Object} SecondaryToolbarOptions
  * @property {HTMLDivElement} toolbar - Container for the secondary toolbar.
- * @property {HTMLButtonElement} toggleButton - Button to toggle the visibility
- *   of the secondary toolbar.
+ * @property {HTMLButtonElement} toggleButton - Button to toggle the visibility of the secondary toolbar.
  * @property {HTMLDivElement} toolbarButtonContainer - Container where all the
  *   toolbar buttons are placed. The maximum height of the toolbar is controlled
  *   dynamically by adjusting the 'max-height' CSS property of this DOM element.
- * @property {HTMLButtonElement} presentationModeButton - Button for entering
- *   presentation mode.
+ * @property {HTMLButtonElement} presentationModeButton - Button for entering presentation mode.
  * @property {HTMLButtonElement} openFileButton - Button to open a file.
  * @property {HTMLButtonElement} printButton - Button to print the document.
- * @property {HTMLButtonElement} downloadButton - Button to download the
- *   document.
- * @property {HTMLLinkElement} viewBookmarkButton - Button to obtain a bookmark
- *   link to the current location in the document.
- * @property {HTMLButtonElement} firstPageButton - Button to go to the first
- *   page in the document.
- * @property {HTMLButtonElement} lastPageButton - Button to go to the last page
- *   in the document.
- * @property {HTMLButtonElement} pageRotateCwButton - Button to rotate the pages
- *   clockwise.
- * @property {HTMLButtonElement} pageRotateCcwButton - Button to rotate the
- *   pages counterclockwise.
- * @property {HTMLButtonElement} toggleHandToolButton - Button to toggle the
- *   hand tool.
- * @property {HTMLButtonElement} documentPropertiesButton - Button for opening
- *   the document properties dialog.
+ * @property {HTMLButtonElement} downloadButton - Button to download the document.
+ * @property {HTMLLinkElement} viewBookmarkButton - Button to obtain a bookmark link to the current location in the document.
+ * @property {HTMLButtonElement} firstPageButton - Button to go to the first page in the document.
+ * @property {HTMLButtonElement} lastPageButton - Button to go to the last page in the document.
+ * @property {HTMLButtonElement} pageRotateCwButton - Button to rotate the pages clockwise.
+ * @property {HTMLButtonElement} pageRotateCcwButton - Button to rotate the pages counterclockwise.
+ * @property {HTMLButtonElement} toggleHandToolButton - Button to toggle the hand tool.
+ * @property {HTMLButtonElement} documentPropertiesButton - Button for opening the document properties dialog.
  */
 
 /**
@@ -4241,22 +4093,17 @@ var SecondaryToolbar = (function SecondaryToolbarClosure() {
     this.toggleButton = options.toggleButton;
     this.toolbarButtonContainer = options.toolbarButtonContainer;
     this.buttons = [
-      { element: options.presentationModeButton, eventName: 'presentationmode',
-        close: true },
+      { element: options.presentationModeButton, eventName: 'presentationmode', close: true },
       { element: options.openFileButton, eventName: 'openfile', close: true },
       { element: options.printButton, eventName: 'print', close: true },
       { element: options.downloadButton, eventName: 'download', close: true },
       { element: options.viewBookmarkButton, eventName: null, close: true },
       { element: options.firstPageButton, eventName: 'firstpage', close: true },
       { element: options.lastPageButton, eventName: 'lastpage', close: true },
-      { element: options.pageRotateCwButton, eventName: 'rotatecw',
-        close: false },
-      { element: options.pageRotateCcwButton, eventName: 'rotateccw',
-        close: false },
-      { element: options.toggleHandToolButton, eventName: 'togglehandtool',
-        close: true },
-      { element: options.documentPropertiesButton,
-        eventName: 'documentproperties', close: true }
+      { element: options.pageRotateCwButton, eventName: 'rotatecw', close: false },
+      { element: options.pageRotateCcwButton, eventName: 'rotateccw', close: false },
+      { element: options.toggleHandToolButton, eventName: 'togglehandtool', close: true },
+      { element: options.documentPropertiesButton, eventName: 'documentproperties', close: true }
     ];
 
     this.mainContainer = mainContainer;
@@ -4381,8 +4228,9 @@ exports.SecondaryToolbar = SecondaryToolbar;
 
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFFindBar = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebPDFFindController);
+    factory((root.pdfjsWebPDFFindBar = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebPDFFindController);
   }
 }(this, function (exports, uiUtils, pdfFindController) {
 
@@ -4396,6 +4244,7 @@ var FindStates = pdfFindController.FindStates;
  * is done by PDFFindController.
  */
 var PDFFindBar = (function PDFFindBarClosure() {
+
   function PDFFindBar(options) {
     this.opened = false;
     this.bar = options.bar || null;
@@ -4567,10 +4416,11 @@ var PDFFindBar = (function PDFFindBarClosure() {
 exports.PDFFindBar = PDFFindBar;
 }));
 
-
+/////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFHistory = {}), root.pdfjsWebDOMEvents);
+    factory((root.pdfjsWebPDFHistory = {})
+    	   , root.pdfjsWebDOMEvents);
   }
 }(this, function (exports, domEvents) {
 
@@ -4964,11 +4814,12 @@ exports.PDFFindBar = PDFFindBar;
   exports.PDFHistory = PDFHistory;
 }));
 
-
+//////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFLinkService = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebDOMEvents);
+    factory((root.pdfjsWebPDFLinkService = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebDOMEvents);
   }
 }(this, function (exports, uiUtils, domEvents) {
 
@@ -5391,12 +5242,14 @@ exports.PDFLinkService = PDFLinkService;
 exports.SimpleLinkService = SimpleLinkService;
 }));
 
-
+/////////////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFPageView = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebPDFRenderingQueue, root.pdfjsWebDOMEvents,
-      root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebPDFPageView = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebPDFRenderingQueue
+    	   , root.pdfjsWebDOMEvents
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, uiUtils, pdfRenderingQueue, domEvents, pdfjsLib) {
 
@@ -5419,10 +5272,8 @@ var TEXT_LAYER_RENDER_DELAY = 200; // ms
  * @property {PDFRenderingQueue} renderingQueue - The rendering queue object.
  * @property {IPDFTextLayerFactory} textLayerFactory
  * @property {IPDFAnnotationLayerFactory} annotationLayerFactory
- * @property {boolean} enhanceTextSelection - Turns on the text selection
- *   enhancement. The default is `false`.
- * @property {boolean} renderInteractiveForms - Turns on rendering of
- *   interactive form elements. The default is `false`.
+ * @property {boolean} enhanceTextSelection - Turns on the text selection enhancement. The default is `false`.
+ * @property {boolean} renderInteractiveForms - Turns on rendering of interactive form elements. The default is `false`.
  */
 
 /**
@@ -5975,11 +5826,12 @@ var PDFPageView = (function PDFPageViewClosure() {
 exports.PDFPageView = PDFPageView;
 }));
 
-
+//////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFThumbnailViewer = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebPDFThumbnailView);
+    factory((root.pdfjsWebPDFThumbnailViewer = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebPDFThumbnailView);
   }
 }(this, function (exports, uiUtils, pdfThumbnailView) {
 
@@ -5992,8 +5844,7 @@ var THUMBNAIL_SCROLL_MARGIN = -19;
 
 /**
  * @typedef {Object} PDFThumbnailViewerOptions
- * @property {HTMLDivElement} container - The container for the thumbnail
- *   elements.
+ * @property {HTMLDivElement} container - The container for the thumbnail elements.
  * @property {IPDFLinkService} linkService - The navigation/linking service.
  * @property {PDFRenderingQueue} renderingQueue - The rendering queue object.
  */
@@ -6169,11 +6020,12 @@ var PDFThumbnailViewer = (function PDFThumbnailViewerClosure() {
 exports.PDFThumbnailViewer = PDFThumbnailViewer;
 }));
 
-
+/////////////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebTextLayerBuilder = {}), root.pdfjsWebDOMEvents,
-      root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebTextLayerBuilder = {})
+    	   , root.pdfjsWebDOMEvents
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, domEvents, pdfjsLib) {
 
@@ -6186,8 +6038,7 @@ var EXPAND_DIVS_TIMEOUT = 300; // ms
  * @property {number} pageIndex - The page index.
  * @property {PageViewport} viewport - The viewport of the text layer.
  * @property {PDFFindController} findController
- * @property {boolean} enhanceTextSelection - Option to turn on improved
- *   text selection.
+ * @property {boolean} enhanceTextSelection - Option to turn on improved text selection.
  */
 
 /**
@@ -6198,6 +6049,7 @@ var EXPAND_DIVS_TIMEOUT = 300; // ms
  * @class
  */
 var TextLayerBuilder = (function TextLayerBuilderClosure() {
+	
   function TextLayerBuilder(options) {
     this.textLayerDiv = options.textLayerDiv;
     this.eventBus = options.eventBus || domEvents.getGlobalEventBus();
@@ -6525,6 +6377,7 @@ var TextLayerBuilder = (function TextLayerBuilderClosure() {
  * @implements IPDFTextLayerFactory
  */
 function DefaultTextLayerFactory() {}
+
 DefaultTextLayerFactory.prototype = {
   /**
    * @param {HTMLDivElement} textLayerDiv
@@ -6548,11 +6401,13 @@ exports.TextLayerBuilder = TextLayerBuilder;
 exports.DefaultTextLayerFactory = DefaultTextLayerFactory;
 }));
 
-
+//////////////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebAnnotationLayerBuilder = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebPDFLinkService, root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebAnnotationLayerBuilder = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebPDFLinkService
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, uiUtils, pdfLinkService, pdfjsLib) {
 
@@ -6651,6 +6506,7 @@ var AnnotationLayerBuilder = (function AnnotationLayerBuilderClosure() {
  * @implements IPDFAnnotationLayerFactory
  */
 function DefaultAnnotationLayerFactory() {}
+
 DefaultAnnotationLayerFactory.prototype = {
   /**
    * @param {HTMLDivElement} pageDiv
@@ -6673,13 +6529,18 @@ exports.AnnotationLayerBuilder = AnnotationLayerBuilder;
 exports.DefaultAnnotationLayerFactory = DefaultAnnotationLayerFactory;
 }));
 
-
+/////////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebPDFViewer = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebPDFPageView, root.pdfjsWebPDFRenderingQueue,
-      root.pdfjsWebTextLayerBuilder, root.pdfjsWebAnnotationLayerBuilder,
-      root.pdfjsWebPDFLinkService, root.pdfjsWebDOMEvents, root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebPDFViewer = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebPDFPageView
+    	   , root.pdfjsWebPDFRenderingQueue
+    	   , root.pdfjsWebTextLayerBuilder
+    	   , root.pdfjsWebAnnotationLayerBuilder
+    	   , root.pdfjsWebPDFLinkService
+    	   , root.pdfjsWebDOMEvents
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, uiUtils, pdfPageView, pdfRenderingQueue,
                   textLayerBuilder, annotationLayerBuilder, pdfLinkService,
@@ -6717,16 +6578,11 @@ var DEFAULT_CACHE_SIZE = 10;
  * @property {HTMLDivElement} viewer - (optional) The viewer element.
  * @property {EventBus} eventBus - The application event bus.
  * @property {IPDFLinkService} linkService - The navigation/linking service.
- * @property {DownloadManager} downloadManager - (optional) The download
- *   manager component.
- * @property {PDFRenderingQueue} renderingQueue - (optional) The rendering
- *   queue object.
- * @property {boolean} removePageBorders - (optional) Removes the border shadow
- *   around the pages. The default is false.
- * @property {boolean} enhanceTextSelection - (optional) Enables the improved
- *   text selection behaviour. The default is `false`.
- * @property {boolean} renderInteractiveForms - (optional) Enables rendering of
- *   interactive form elements. The default is `false`.
+ * @property {DownloadManager} downloadManager - (optional) The download manager component.
+ * @property {PDFRenderingQueue} renderingQueue - (optional) The rendering queue object.
+ * @property {boolean} removePageBorders - (optional) Removes the border shadow around the pages. The default is false.
+ * @property {boolean} enhanceTextSelection - (optional) Enables the improved text selection behaviour. The default is `false`.
+ * @property {boolean} renderInteractiveForms - (optional) Enables rendering of interactive form elements. The default is `false`.
  */
 
 /**
@@ -7531,20 +7387,32 @@ exports.PresentationModeState = PresentationModeState;
 exports.PDFViewer = PDFViewer;
 }));
 
-
+////////////////////////////////////////////////////////////////////////////
 (function (root, factory) {
   {
-    factory((root.pdfjsWebApp = {}), root.pdfjsWebUIUtils,
-      root.pdfjsWebDownloadManager, root.pdfjsWebPDFHistory,
-      root.pdfjsWebPreferences, root.pdfjsWebPDFSidebar,
-      root.pdfjsWebViewHistory, root.pdfjsWebPDFThumbnailViewer,
-      root.pdfjsWebSecondaryToolbar, root.pdfjsWebPasswordPrompt,
-      root.pdfjsWebPDFPresentationMode, root.pdfjsWebPDFDocumentProperties,
-      root.pdfjsWebHandTool, root.pdfjsWebPDFViewer,
-      root.pdfjsWebPDFRenderingQueue, root.pdfjsWebPDFLinkService,
-      root.pdfjsWebPDFOutlineViewer, root.pdfjsWebOverlayManager,
-      root.pdfjsWebPDFAttachmentViewer, root.pdfjsWebPDFFindController,
-      root.pdfjsWebPDFFindBar, root.pdfjsWebDOMEvents, root.pdfjsWebPDFJS);
+    factory((root.pdfjsWebApp = {})
+    	   , root.pdfjsWebUIUtils
+    	   , root.pdfjsWebDownloadManager
+    	   , root.pdfjsWebPDFHistory
+    	   , root.pdfjsWebPreferences
+    	   , root.pdfjsWebPDFSidebar
+    	   , root.pdfjsWebViewHistory
+    	   , root.pdfjsWebPDFThumbnailViewer
+    	   , root.pdfjsWebSecondaryToolbar
+    	   , root.pdfjsWebPasswordPrompt
+    	   , root.pdfjsWebPDFPresentationMode
+    	   , root.pdfjsWebPDFDocumentProperties
+    	   , root.pdfjsWebHandTool
+    	   , root.pdfjsWebPDFViewer
+    	   , root.pdfjsWebPDFRenderingQueue
+    	   , root.pdfjsWebPDFLinkService
+    	   , root.pdfjsWebPDFOutlineViewer
+    	   , root.pdfjsWebOverlayManager
+    	   , root.pdfjsWebPDFAttachmentViewer
+    	   , root.pdfjsWebPDFFindController
+    	   , root.pdfjsWebPDFFindBar
+    	   , root.pdfjsWebDOMEvents
+    	   , root.pdfjsWebPDFJS);
   }
 }(this, function (exports, uiUtilsLib, downloadManagerLib, pdfHistoryLib,
                   preferencesLib, pdfSidebarLib, viewHistoryLib,
