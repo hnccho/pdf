@@ -7984,7 +7984,8 @@ var PDFViewerApplication = {
   },
 
   download: function pdfViewDownload() {
-    function downloadByUrl() {
+
+	function downloadByUrl() {
       downloadManager.downloadUrl(url, filename);
     }
 
@@ -8545,8 +8546,8 @@ var PDFViewerApplication = {
   }
 };
 
-var HOSTED_VIEWER_ORIGINS = ['null',
-  'http://mozilla.github.io', 'https://mozilla.github.io'];
+var HOSTED_VIEWER_ORIGINS = ['null', 'http://mozilla.github.io', 'https://mozilla.github.io'];
+
 function validateFileURL(file) {
   try {
     var viewerOrigin = new URL(window.location.href).origin || 'null';
@@ -8613,7 +8614,6 @@ function webViewerInitialized() {
   } else {
     fileInput.value = null;
   }
-
 
   var PDFJS = pdfjsLib.PDFJS;
 
@@ -8921,11 +8921,9 @@ function webViewerUpdateViewarea(e) {
       }).catch(function() { /* unable to write to storage */ });
     });
   }
-  var href =
-    PDFViewerApplication.pdfLinkService.getAnchorUrl(location.pdfOpenParams);
+  var href = PDFViewerApplication.pdfLinkService.getAnchorUrl(location.pdfOpenParams);
   PDFViewerApplication.appConfig.toolbar.viewBookmark.href = href;
-  PDFViewerApplication.appConfig.secondaryToolbar.viewBookmarkButton.href =
-    href;
+  PDFViewerApplication.appConfig.secondaryToolbar.viewBookmarkButton.href = href;
 
   // Update the current bookmark in the browsing history.
   PDFViewerApplication.pdfHistory.updateCurrentBookmark(location.pdfOpenParams,
@@ -8933,8 +8931,7 @@ function webViewerUpdateViewarea(e) {
 
   // Show/hide the loading indicator in the page number input element.
   var pageNumberInput = PDFViewerApplication.appConfig.toolbar.pageNumber;
-  var currentPage =
-    PDFViewerApplication.pdfViewer.getPageView(PDFViewerApplication.page - 1);
+  var currentPage = PDFViewerApplication.pdfViewer.getPageView(PDFViewerApplication.page - 1);
 
   if (currentPage.renderingState === RenderingStates.FINISHED) {
     pageNumberInput.classList.remove(PAGE_NUMBER_LOADING_INDICATOR);
@@ -9511,10 +9508,8 @@ function getViewerConfiguration() {
     secondaryToolbar: {
       toolbar: document.getElementById('secondaryToolbar'),
       toggleButton: document.getElementById('secondaryToolbarToggle'),
-      toolbarButtonContainer:
-        document.getElementById('secondaryToolbarButtonContainer'),
-      presentationModeButton:
-        document.getElementById('secondaryPresentationMode'),
+      toolbarButtonContainer: document.getElementById('secondaryToolbarButtonContainer'),
+      presentationModeButton: document.getElementById('secondaryPresentationMode'),
       openFileButton: document.getElementById('secondaryOpenFile'),
       printButton: document.getElementById('secondaryPrint'),
       downloadButton: document.getElementById('secondaryDownload'),
