@@ -87,7 +87,6 @@
 
 "use strict";
 
-
 var pdfjsLib = __webpack_require__(1);
 var CSS_UNITS = 96.0 / 72.0;
 var DEFAULT_SCALE_VALUE = 'auto';
@@ -3077,7 +3076,7 @@ var defaultPreferences = null;
 function getDefaultPreferences() {
   if (!defaultPreferences) {
     defaultPreferences = Promise.resolve({
-      "showPreviousViewOnLoad": true,
+      "showPreviousViewOnLoad": false,
       "defaultZoomValue": "",
       "sidebarViewOnLoad": 0,
       "enableHandToolOnLoad": false,
@@ -3092,7 +3091,7 @@ function getDefaultPreferences() {
       "externalLinkTarget": 0,
       "enhanceTextSelection": false,
       "renderer": "canvas",
-      "renderInteractiveForms": false,
+      "renderInteractiveForms": true,
       "enablePrintAutoRotate": false,
       "disablePageLabels": false
     });
@@ -6336,7 +6335,7 @@ var PDFViewer = function pdfViewer() {
     this.downloadManager = options.downloadManager || null;
     this.removePageBorders = options.removePageBorders || false;
     this.enhanceTextSelection = options.enhanceTextSelection || false;
-    this.renderInteractiveForms = options.renderInteractiveForms || true;
+    this.renderInteractiveForms = options.renderInteractiveForms || false;
     this.enablePrintAutoRotate = options.enablePrintAutoRotate || false;
     this.renderer = options.renderer || RendererType.CANVAS;
     this.defaultRenderingQueue = !options.renderingQueue;
