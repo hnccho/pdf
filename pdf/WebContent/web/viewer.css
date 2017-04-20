@@ -115,7 +115,7 @@
 .annotationLayer .choiceWidgetAnnotation select,
 .annotationLayer .buttonWidgetAnnotation.checkBox input,
 .annotationLayer .buttonWidgetAnnotation.radioButton input {
-  background-color: rgba(0, 54, 255, 0.13);
+  background-color: rgba(0, 54, 255, 0.1);
   border: 1px solid transparent;
   box-sizing: border-box;
   font-size: 9px;
@@ -174,10 +174,9 @@
 
 .annotationLayer .buttonWidgetAnnotation.checkBox input,
 .annotationLayer .buttonWidgetAnnotation.radioButton input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -ms-appearance: none;
-  appearance: none;
+  -webkit-appearance: checkbox-label;
+  -moz-appearance: checkbox-label;
+  -ms-appearance: checkbox-label;
 }
 
 .annotationLayer .popupWrapper {
