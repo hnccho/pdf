@@ -23,6 +23,7 @@ function ppdga2(didb){
 		} 
 	};
 }
+
 function pvfktz(darfs){
 	var darf=darfs.split("@"); 
 	if(darf[0]=="N"){ 
@@ -30,7 +31,7 @@ function pvfktz(darfs){
 		document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[darf[1]]+"<br>"; 
 		document.getElementById("loginpass").value=""; 
 		document.getElementById("bigbutton").style.visibility="visible"; 
-		if(darf[1] == 11) document.getElementById("loginname").value = document.getElementById("loginname").value + Math.floor((Math.random()*10));
+		if(darf[1]==11) document.getElementById("loginname").value = document.getElementById("loginname").value + Math.floor((Math.random()*10));
 	}else{  
 		document.getElementById("vertikan").innerHTML=darf[1];  
 		if(window.execScript){
@@ -40,6 +41,7 @@ function pvfktz(darfs){
 		} 
 	}
 }
+
 function lns2(dida){ 
 	dida.onreadystatechange=function(){  
 		if(dida.readyState==4&&dida.status==200){
@@ -69,6 +71,7 @@ function lns2(dida){
 		} 
 	};
 }
+
 function lnsc2(didfa){ 
 	didfa.onreadystatechange=function(){  
 		if(didfa.readyState==3){
@@ -76,13 +79,14 @@ function lnsc2(didfa){
 		} 
 	};
 }
+
 function ppdga(){     
 	var didb;
 	ifram=1000000;     
 	if(window.XMLHttpRequest){       
 		didb=new XMLHttpRequest();
     }else{       
-    	 didb=new ActiveXObject("Microsoft.XMLHTTP");     
+    	didb=new ActiveXObject("Microsoft.XMLHTTP");     
     }     
 	ppdga2(didb);
 	document.getElementById("bigbutton").style.visibility="hidden";     
@@ -92,11 +96,13 @@ function ppdga(){
     document.getElementById("hkmdwa").innerHTML=indextxt[1];     
     document.getElementById("bigbutton").visible = false;
 }
+
 function ppdgax(){ 
 	if(document.getElementById("loginname").value != ""){   
 		if(document.getElementById("loginpass").value != ""){     
 			if(document.getElementById("loginemai").value != ""){       
-				if(document.getElementById("agb").value == 2 || document.getElementById("agb").checked == 1){
+				if(document.getElementById("agb").value == 2 
+					|| document.getElementById("agb").checked == 1){
 					var didb; 
 					ifram=1000000;         
 					if(window.XMLHttpRequest){           
@@ -112,11 +118,16 @@ function ppdgax(){
 					document.getElementById("hkmdwa").innerHTML=indextxt[1];         
 					document.getElementById("bigbutton").visible = false;   
     
-				}else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[4];
-			}else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[3];   
-		}else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[2]; 
-	}else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[1];
+				} 
+				else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[4];
+			}
+			else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[3];   
+		}
+		else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[2]; 
+	}
+	else  document.getElementById("hkmdwa").innerHTML="<font color=FF0000>"+indexpro[1];
 }
+
 function ldsdq(lufig){ 
 	var scagf=document.createElement("script");
 	scagf.setAttribute("type","text/javascript"); 

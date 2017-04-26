@@ -3,10 +3,12 @@ window.iaaa = (function(){
 		function(ifff){window.setTimeout(ifff,1000/60);
 	};
 })();
+
 function ree(){  
 	zl--;
 	if(!zl) iaaa(iloop);
 }
+
 function iani(fud6d,nf7db,art,ijf78g,gikd7gfd){  
 	var wi=art.width/gikd7gfd; 
 	var ho=art.height; 
@@ -15,6 +17,7 @@ function iani(fud6d,nf7db,art,ijf78g,gikd7gfd){
 	nf7db+=-h2;  
 	ibb.drawImage(art,wi*ijf78g,0,wi,ho,fud6d,nf7db,wi,ho); 
 }
+
 var idam=-1000, idami = 1;
 var idan=-1000, idani = 1;
 function iloop(){  
@@ -40,11 +43,12 @@ function iloop(){
 							if (ipw[i] < 0) ipw[i]+=72;          
 							if (ipw[i] >= 72) ipw[i]-=72;        
 						}
-						}else{ 
-							if(ipxx[i].length > ipwp[i]+1) ipwp[i]++; 
-						}      
-						if(ipo[i][ipon[i]] == 0){        
-							var wabst = Math.min(Math.abs(ipwt[i]-wz-72),Math.min(Math.abs(ipwt[i]-wz),Math.abs(ipwt[i]-wz+72)));        if(wabst > 1 && ifram % 3 == 0){
+					}else{ 
+						if(ipxx[i].length > ipwp[i]+1) ipwp[i]++; 
+					}      
+					if(ipo[i][ipon[i]] == 0){        
+						var wabst = Math.min(Math.abs(ipwt[i]-wz-72),Math.min(Math.abs(ipwt[i]-wz),Math.abs(ipwt[i]-wz+72)));        
+						if(wabst > 1 && ifram % 3 == 0){
 							var dg = 1;         
 							var summe1 = (ipwt[i] - wz + 108) % 72;         
 							var summe2 = (ipwt[i] - wz + 72) % 72;          
@@ -86,7 +90,11 @@ function iloop(){
 						if(ifram-2==ipr[i][ipon[i]]) ibb.globalAlpha=1;      
 					}      
 					if(ifram-3==ipr[i][ipon[i]]){        
-						ipa[j]=2; ipnr[j]=9;ipani[j]=ifram; idan = ifram-1; idani = j;
+						ipa[j]=2; 
+						ipnr[j]=9;
+						ipani[j]=ifram; 
+						idan = ifram-1; 
+						idani = j;
 					}      
 					if(ifram-150==ipr[i][ipon[i]]) ipon[i]++;    
 				}    
@@ -161,6 +169,7 @@ function iloop(){
 		if(ifram < 800) iaaa(iloop);  
 	}
 }
+
 var iaa = document.getElementById("inx");
 var ibb = iaa.getContext("2d"); 
 var zl=14; 
@@ -171,48 +180,63 @@ igg.onload = function(){
 	ibb.drawImage(igg,100,200);
 };
 igg.src = iwgu+"i/garage2a.png";
+
 var icc = new Image();
 icc.onload = function(){ree();};
 icc.src = "i/startseite3.jpg";
+
 var idd = new Image();
 idd.onload = function(){ree();};
 idd.src = iwgu+"i/licht.png";
+
 var iee = new Image();
 iee.onload = function(){ree();};
 iee.src = iwgu+"i/indextank.png";
+
 var iff = new Image();
 iff.onload = function(){ree();};
 iff.src = iwgu+"i/dampf2.png";
+
 var ihh = new Image();
 ihh.onload = function(){ree();};
 ihh.src = iwgu+"i/g3.png";
+
 var iii = new Image();
 iii.onload = function(){ree();};
 iii.src = iwgu+"i/panzer1a.png";
+
 var ijj = new Image();
 ijj.onload = function(){ree();};
 ijj.src = iwgu+"i/panzer1b.png";
+
 var ikk = new Image();
 ikk.onload = function(){ree();};
 ikk.src = iwgu+"i/panzer3a.png";
+
 var ill = new Image();
 ill.onload = function(){ree();};
 ill.src = iwgu+"i/panzer3b.png";
+
 var imm = new Image();
 imm.onload = function(){ree();};
 imm.src = iwgu+"i/garage2b.png";
+
 var inn = new Image();
 inn.onload = function(){ree();};
 inn.src = iwgu+"i/licht3.png";
+
 var ioo = new Image();
 ioo.onload = function(){ree();};
 ioo.src = iwgu+"i/tankexplo1a.png";
+
 var ipp = new Image();
 ipp.onload = function(){ree();};
 ipp.src = iwgu+"i/indexpfeil"+sprache+".png";
+
 var iqq = new Image();
 iqq.onload = function(){ree();};
 iqq.src = iwgu+"i/truemmer.png";
+
 var iaktiv=1,ifram=0;
 var bup=0;ianz=5;ifram=0;ipnr=[];ipani=[];ipa=[];ipx=[];ipy=[];ipxx=[];ipyy=[];ipw=[];ipwt=[];ipg=[];ipgz=[];ipo=[];ipr=[];ipwp=[];ipon=[];
 
